@@ -1,69 +1,73 @@
-import MainWrapper from "@/layouts/mainwrapper";
-import React from "react";
+import { BaseUrl } from '@/App';
+import MainWrapper from '@/layouts/mainwrapper';
+import { DivCard } from '@/layouts/wrappers';
+import { ButtonLoading } from '@/widgets/inputs/buttons';
+import { CustomInput } from '@/widgets/inputs/inputs';
+import { Card, CardBody, Typography, Button } from '@material-tailwind/react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const ClientForm = () => { 
-    console.log('client form side')
+  const PostItem = async (path, data, setloading) => {
+    try {
+      let res = await axios.post(`${BaseUrl}${path}`, data);
+      return res
+    } catch (error) {
+      console.log(error)
+      return error;
+    }
+  };
+
+const ClientForm = () => {
+  const [formdata, setformdata] = useState({});
+  const [loading, setloading] = useState(false);
+  const navi = useNavigate()
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setformdata((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formdata = new FormData(e.target);
+    setloading(true)
+    let res = await PostItem('client', formdata, setloading);
+    if(res?.status==201){
+      navi(-1)
+    }
+    else{
+      window.alert(res?.response?.data?.message||"something went wrong")
+    }
+    setloading(false)
+  };
+
   return (
     <MainWrapper>
-        <div className="bg-white p-3">
-            <form class="w-full max-w-lg">
-  <div class="flex flex-wrap -mx-3 mb-6">
-    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
-        First Name
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane"/>
-      <p class="text-red-500 text-xs italic">Please fill out this field.</p>
-    </div>
-    <div class="w-full md:w-1/2 px-3">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
-        Last Name
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe"/>
-    </div>
-  </div>
-  <div class="flex flex-wrap -mx-3 mb-6">
-    <div class="w-full px-3">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
-        Password
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="******************"/>
-      <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
-    </div>
-  </div>
-  <div class="flex flex-wrap -mx-3 mb-2">
-    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-city">
-        City
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Albuquerque"/>
-    </div>
-    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
-        State
-      </label>
-      <div class="relative">
-        <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-          <option>New Mexico</option>
-          <option>Missouri</option>
-          <option>Texas</option>
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-        </div>
-      </div>
-    </div>
-    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-zip">
-        Zip
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="90210"/>
-    </div>
-  </div>
-</form> 
-</div>
+      <Card className="shadow-unset p-2">
+        <Typography variant="h4" color="gray" className="ps-4">
+          Client Information
+        </Typography>
+        <CardBody className="w-full s-0 w-min-">
+          <form onSubmit={handleSubmit}>
+            <CardBody className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10">
+              <CustomInput name="name" type="text" label="Name" value={formdata.name} onChange={handleChange} />
+              <CustomInput name="title" type="text" label="Title" value={formdata.title} onChange={handleChange} />
+              <CustomInput name="department" type="text" label="Department" value={formdata.department} onChange={handleChange} />
+              <CustomInput name="area" type="text" label="Area" value={formdata.area} onChange={handleChange} />
+              <CustomInput name="suburb" type="text" label="Suburb" value={formdata.suburb} onChange={handleChange} />
+              <CustomInput name="phone" type="phone" label="Phone" value={formdata.phone} onChange={handleChange} />
+              <CustomInput name="mobile" type="phone" label="Mobile" value={formdata.mobile} onChange={handleChange} />
+              <CustomInput name="email" type="email" label="Email" value={formdata.email} onChange={handleChange} />
+              <CustomInput name="item_id" type="text" label="Item ID" value={formdata.item_id} onChange={handleChange} />
+            </CardBody>
+            <ButtonLoading className="ms-5" loading={loading} label={'Submit'} />
+          </form>
+          
+        </CardBody>
+      </Card>
     </MainWrapper>
   );
-}
+};
 
-export default ClientForm
+export default ClientForm;

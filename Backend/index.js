@@ -1,7 +1,16 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 
 app.use(express.json())
+
+const corsConfig = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }
+  
+  app.use(cors(corsConfig))
 
 const PORT = process.env.Node_Mode == 'development' ? 5000 : 3000
 const clientRouter = require('./routes/clients')

@@ -36,6 +36,15 @@ export const routes = [
       },
     ],
   },
+  {
+    layout: "auth",
+    pages: [
+      {
+        path: "/",
+        element: <SignIn />,
+      },
+    ],
+  },
 ];
 
 export default routes;

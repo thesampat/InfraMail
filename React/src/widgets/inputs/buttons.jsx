@@ -13,5 +13,13 @@ const SimpleButton=({text, onClick ,disabled=false})=>{
     )
 }
 
+const ButtonLoading=({label, loading, className})=>{
+  return(
+    <Button type="submit" loading={true}>
+        {label}
+      </Button>
+  )
+}
 
-export {SimpleButton}
+
+export {SimpleButton, ButtonLoading}

@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Dashboard, Auth } from "@/layouts";
 
+const BaseUrl = `${window.location.protocol}//127.0.0.1:3000/`
+
 function App() {
   return (
     <Routes>
@@ -11,4 +13,5 @@ function App() {
   );
 }
 
+export {BaseUrl}
 export default App;
